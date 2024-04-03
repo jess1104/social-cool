@@ -11,11 +11,14 @@ function Login() {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [errMsg, setErrMsg] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false)
 
     // 送出
     function onSubmit() {
+        setIsLoading(true)
         if (activeItem === 'register') {
             firebase.auth().createUserWithEmailAndPassword(email, password).then(() => {
+                setIsLoading(false)
                 navigate('/')
             }).catch((error) => {
                 switch (error.code) {
@@ -30,9 +33,11 @@ function Login() {
                         break;
                     default:
                 }
+                setIsLoading(false)
             })
         } else if (activeItem === 'login') {
             firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+                setIsLoading(false)
                 navigate('/')
             }).catch((error) => {
                 switch (error.code) {
@@ -41,7 +46,8 @@ function Login() {
                     case 'auth/invalid-credential':
                         setErrMsg('信箱或密碼不正確')
                 }
-                console.log(error.code);
+                // console.log(error.code);
+                setIsLoading(false)
             })
         }
     }
@@ -61,7 +67,7 @@ function Login() {
             <Form.Input label='信箱' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='請輸入信箱' />
             <Form.Input label='密碼' type='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='請輸入密碼' />
             {errMsg && <Message negative>{errMsg}</Message>}
-            <Form.Button>
+            <Form.Button loading={isLoading}>
                 {activeItem === 'register' && '註冊'}
                 {activeItem === 'login' && '登錄'}
             </Form.Button>
