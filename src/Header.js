@@ -1,12 +1,33 @@
 import { Menu, Search } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import React from 'react'
+
+import firebase from './utils/firebase'
 
 function Header() {
+    const [user, setUser] = React.useState(null);
+    // 監聽user狀態
+    React.useEffect(() => {
+        firebase.auth().onAuthStateChanged((curUser) => {
+            console.log('curUser', curUser);
+            setUser(curUser)
+        })
+    })
     return <Menu>
         <Menu.Item as={Link} to="/">Social Web</Menu.Item>
         <Menu.Item><Search /></Menu.Item>
         <Menu.Menu position='right'>
-            <Menu.Item as={Link} to="/login">註冊/登入</Menu.Item>
+            {
+                user ? (
+                    <>
+                        <Menu.Item as={Link} to="/new-post">發表文章</Menu.Item>
+                        <Menu.Item as={Link} to="/my">會員</Menu.Item>
+                        <Menu.Item as={Link} onClick={() => firebase.auth().signOut()}>登出</Menu.Item>
+                    </>
+                ) : (
+                    <Menu.Item as={Link} to="/login">註冊/登入</Menu.Item>
+                )
+            }
         </Menu.Menu>
     </Menu>
 }
