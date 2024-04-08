@@ -12,7 +12,7 @@ function Header() {
             console.log('curUser', curUser);
             setUser(curUser)
         })
-    })
+    }, [])
     return <Menu>
         <Menu.Item as={Link} to="/">Social Web</Menu.Item>
         <Menu.Item><Search /></Menu.Item>
