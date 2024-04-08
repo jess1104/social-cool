@@ -9,7 +9,7 @@ function Header() {
     // 監聽user狀態
     React.useEffect(() => {
         firebase.auth().onAuthStateChanged((curUser) => {
-            console.log('curUser', curUser);
+            // console.log('curUser', curUser);
             setUser(curUser)
         })
     }, [])

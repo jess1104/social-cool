@@ -9,7 +9,6 @@ function Topics() {
     React.useEffect(() => {
         // 
         firebase.firestore().collection('topics').get().then((querySnapshot) => {
-            console.log('querySnapshot', querySnapshot);
             const data = querySnapshot.docs.map((doc) => doc.data())
             setTopics(data)
         })
