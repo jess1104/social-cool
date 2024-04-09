@@ -12,11 +12,36 @@ function Post() {
     const { postId } = useParams()
     const [post, setPost] = React.useState({ author: {} })
     React.useEffect(() => {
-        firebase.firestore().collection('posts').doc(postId).get().then((docSnapshot) => {
+        // 只能單次取得資料
+        // firebase.firestore().collection('posts').doc(postId).get().then((docSnapshot) => {
+        //     const data = docSnapshot.data()
+        //     setPost(data)
+        // })
+        // 監聽某一筆資料變動：onSnapshot
+        firebase.firestore().collection('posts').doc(postId).onSnapshot((docSnapshot) => {
             const data = docSnapshot.data()
             setPost(data)
         })
     }, [])
+
+    // 收藏功能
+    function toggleCollected() {
+        const uid = firebase.auth().currentUser.uid;
+        // 更新收藏
+        if (isCollected) {
+            firebase.firestore().collection('posts').doc(postId).update({
+                collectedBy: firebase.firestore.FieldValue.arrayRemove(uid)
+            })
+        } else {
+            firebase.firestore().collection('posts').doc(postId).update({
+                collectedBy: firebase.firestore.FieldValue.arrayUnion(uid)
+            })
+        }
+    }
+
+    // 是否已收藏
+    const isCollected = post.collectedBy?.includes(firebase.auth().currentUser.uid)
+
     return <Container>
         <Grid>
             <Grid.Row>
@@ -35,7 +60,7 @@ function Post() {
                     <Segment basic vertical>
                         留言 0．讚 0．
                         <Icon name="thumbs up outline" color='grey' />．
-                        <Icon name="bookmark outline" color='grey' />
+                        <Icon name={`bookmark ${isCollected ? '' : 'outline'}`} color={isCollected ? 'orange' : 'grey'} link onClick={toggleCollected} />
                     </Segment>
                 </Grid.Column>
                 <Grid.Column width={3}>空白</Grid.Column>
