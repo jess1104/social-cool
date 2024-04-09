@@ -24,23 +24,25 @@ function Post() {
         })
     }, [])
 
-    // 收藏功能
-    function toggleCollected() {
+    // 點贊/收藏功能
+    function toggle(isActive, field) {
         const uid = firebase.auth().currentUser.uid;
         // 更新收藏
-        if (isCollected) {
+        if (isActive) {
             firebase.firestore().collection('posts').doc(postId).update({
-                collectedBy: firebase.firestore.FieldValue.arrayRemove(uid)
+                [field]: firebase.firestore.FieldValue.arrayRemove(uid)
             })
         } else {
             firebase.firestore().collection('posts').doc(postId).update({
-                collectedBy: firebase.firestore.FieldValue.arrayUnion(uid)
+                [field]: firebase.firestore.FieldValue.arrayUnion(uid)
             })
         }
     }
 
     // 是否已收藏
     const isCollected = post.collectedBy?.includes(firebase.auth().currentUser.uid)
+    // 是否已點讚
+    const isLiked = post.likedBy?.includes(firebase.auth().currentUser.uid)
 
     return <Container>
         <Grid>
@@ -58,9 +60,9 @@ function Post() {
                     <Image src={post.imageUrl} />
                     <Segment basic vertical>{post.content}</Segment>
                     <Segment basic vertical>
-                        留言 0．讚 0．
-                        <Icon name="thumbs up outline" color='grey' />．
-                        <Icon name={`bookmark ${isCollected ? '' : 'outline'}`} color={isCollected ? 'orange' : 'grey'} link onClick={toggleCollected} />
+                        留言 0．讚 {post.likedBy?.length || 0}．
+                        <Icon name={`thumbs up ${isLiked ? '' : 'outline'}`} color={isLiked ? 'blue' : 'grey'} link onClick={() => toggle(isLiked, 'likedBy')} />．
+                        <Icon name={`bookmark ${isCollected ? '' : 'outline'}`} color={isCollected ? 'orange' : 'grey'} link onClick={() => toggle(isCollected, 'collectedBy')} />
                     </Segment>
                 </Grid.Column>
                 <Grid.Column width={3}>空白</Grid.Column>
