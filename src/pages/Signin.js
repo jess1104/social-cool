@@ -5,7 +5,7 @@ import 'firebase/compat/auth';
 import firebase from '../utils/firebase'
 
 
-function Login() {
+function Signin() {
     const navigate = useNavigate();
     const [activeItem, setActiveItem] = React.useState('register');
     const [email, setEmail] = React.useState('');
@@ -75,4 +75,4 @@ function Login() {
     </Container>)
 }
 
-export default Login
+export default Signin
