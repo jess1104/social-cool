@@ -34,13 +34,13 @@ function Posts() {
                                     </Item.Meta>
                                     <Item.Header>{post.title}</Item.Header>
                                     <Item.Description>{post.content}</Item.Description>
-                                    <Item.Extra>留言 0．讚 {post.likedBy?.length || 0}</Item.Extra>
+                                    <Item.Extra>留言 {post.commentsCount || 0}．讚 {post.likedBy?.length || 0}</Item.Extra>
                                 </Item.Content>
                             </Item>
                         })}
                     </Item.Group>
                 </Grid.Column>
-                <Grid.Column width={3}>空白</Grid.Column>
+                <Grid.Column width={3}></Grid.Column>
             </Grid.Row>
         </Grid>
     </Container>

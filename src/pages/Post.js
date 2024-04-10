@@ -13,6 +13,7 @@ function Post() {
     const [post, setPost] = React.useState({ author: {} })
     const [commentContent, setCommentContent] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
+    const [comments, setComments] = React.useState([])
     React.useEffect(() => {
         // 只能單次取得資料
         // firebase.firestore().collection('posts').doc(postId).get().then((docSnapshot) => {
@@ -23,6 +24,17 @@ function Post() {
         firebase.firestore().collection('posts').doc(postId).onSnapshot((docSnapshot) => {
             const data = docSnapshot.data()
             setPost(data)
+        })
+    }, [])
+
+    // 監聽留言的變化
+    React.useEffect(() => {
+        firebase.firestore().collection('posts').doc(postId).collection('comments').orderBy('createdAt').onSnapshot((collectionSnapshot) => {
+            const data = collectionSnapshot.docs.map((doc) => {
+                const id = doc.id
+                return { ...doc.data(), id }
+            })
+            setComments(data)
         })
     }, [])
 
@@ -92,7 +104,7 @@ function Post() {
                     <Image src={post.imageUrl} />
                     <Segment basic vertical>{post.content}</Segment>
                     <Segment basic vertical>
-                        留言 0．讚 {post.likedBy?.length || 0}．
+                        留言 {post.commentsCount || 0}．讚 {post.likedBy?.length || 0}．
                         <Icon name={`thumbs up ${isLiked ? '' : 'outline'}`} color={isLiked ? 'blue' : 'grey'} link onClick={() => toggle(isLiked, 'likedBy')} />．
                         <Icon name={`bookmark ${isCollected ? '' : 'outline'}`} color={isCollected ? 'orange' : 'grey'} link onClick={() => toggle(isCollected, 'collectedBy')} />
                     </Segment>
@@ -101,20 +113,24 @@ function Post() {
                             <Form.TextArea value={commentContent} onChange={(e) => setCommentContent(e.target.value)}></Form.TextArea>
                             <Form.Button onClick={onSubmit} loading={isLoading}>留言</Form.Button>
                         </Form>
-                        <Header>共 2 篇留言</Header>
-                        <Comment>
-                            <Comment.Avatar src='' />
-                            <Comment.Content>
-                                <Comment.Author as='span'>留言者名稱</Comment.Author>
-                                <Comment.Metadata>
-                                    {new Date().toLocaleDateString()}
-                                </Comment.Metadata>
-                                <Comment.Text>我覺得這個還好</Comment.Text>
-                            </Comment.Content>
-                        </Comment>
+                        <Header>共 {post.commentsCount || 0} 篇留言</Header>
+                        {comments.map((comment) => {
+                            return (
+                                <Comment key={comment.id}>
+                                    <Comment.Avatar src={comment.author.photoURL} />
+                                    <Comment.Content>
+                                        <Comment.Author as='span'>{comment.author.displayName || '使用者'}</Comment.Author>
+                                        <Comment.Metadata>
+                                            {comment.createdAt.toDate().toLocaleString()}
+                                        </Comment.Metadata>
+                                        <Comment.Text>{comment.content}</Comment.Text>
+                                    </Comment.Content>
+                                </Comment>
+                            )
+                        })}
                     </Comment.Group>
                 </Grid.Column>
-                <Grid.Column width={3}>空白</Grid.Column>
+                <Grid.Column width={3}></Grid.Column>
             </Grid.Row>
         </Grid>
     </Container>
