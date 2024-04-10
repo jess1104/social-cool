@@ -6,6 +6,7 @@ import Login from './pages/Signin'
 import Posts from './pages/Posts'
 import MyPosts from './pages/MyPosts'
 import MyCollections from './pages/MyCollections'
+import MySettings from './pages/MySettings'
 import NewPost from './pages/NewPost'
 import Post from './pages/Post'
 import Topics from './components/Topics'
@@ -26,7 +27,7 @@ function App() {
             <Route path='/' element={<PostViewLayout isMember />}>
                 <Route path="/my/posts" element={<MyPosts />} exact />
                 <Route path="/my/collections" element={<MyCollections />} exact />
-                <Route path="/my/settings" element={'我的設定'} exact />
+                <Route path="/my/settings" element={<MySettings />} exact />
             </Route>
         </Routes>
     </BrowserRouter>
