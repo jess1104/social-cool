@@ -1,6 +1,5 @@
 import React from 'react';
-import { Item, Image, Icon } from 'semantic-ui-react'
-import { Link } from 'react-router-dom';
+import { Item } from 'semantic-ui-react'
 import firebase from '../utils/firebase'
 import 'firebase/compat/firestore';
 
@@ -19,7 +18,7 @@ function Posts() {
     }, [])
     return <Item.Group>
         {posts.map(post => {
-            return <CommonPost post={post} />
+            return <CommonPost post={post} key={post.id} />
         })}
     </Item.Group>
 }

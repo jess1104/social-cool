@@ -2,7 +2,7 @@ import { Item, Image, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 
 function CommonPost({ post }) {
-    return <Item key={post.id} as={Link} to={`/${post.id}`}>
+    return <Item as={Link} to={`/${post.id}`}>
         <Item.Image src={post.imageUrl || 'https://react.semantic-ui.com/images/wireframe/image.png'} />
         <Item.Content>
             <Item.Meta>

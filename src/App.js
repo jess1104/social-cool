@@ -4,6 +4,8 @@ import { Grid, Container } from 'semantic-ui-react'
 import Header from "./Header"
 import Login from './pages/Signin'
 import Posts from './pages/Posts'
+import MyPosts from './pages/MyPosts'
+import MyCollections from './pages/MyCollections'
 import NewPost from './pages/NewPost'
 import Post from './pages/Post'
 import Topics from './components/Topics'
@@ -22,8 +24,8 @@ function App() {
             <Route path='/new-post' element={<NewPost />}></Route>
             {/* 會員頁面的巢狀 */}
             <Route path='/' element={<PostViewLayout isMember />}>
-                <Route path="/my/posts" element={'我的文章'} exact />
-                <Route path="/my/collections" element={'我的收藏'} exact />
+                <Route path="/my/posts" element={<MyPosts />} exact />
+                <Route path="/my/collections" element={<MyCollections />} exact />
                 <Route path="/my/settings" element={'我的設定'} exact />
             </Route>
         </Routes>
