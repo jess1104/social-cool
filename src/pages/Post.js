@@ -1,6 +1,6 @@
 import React from 'react';
 // Grid會自動分成16等份，要用width={num}去劃分等份
-import { Grid, Container, Image, Header, Segment, Icon } from 'semantic-ui-react'
+import { Grid, Container, Image, Header, Segment, Icon, Comment, Form } from 'semantic-ui-react'
 // 可以去拿domain的參數
 import { useParams } from 'react-router-dom'
 
@@ -11,6 +11,8 @@ import 'firebase/compat/firestore';
 function Post() {
     const { postId } = useParams()
     const [post, setPost] = React.useState({ author: {} })
+    const [commentContent, setCommentContent] = React.useState('')
+    const [isLoading, setIsLoading] = React.useState(false)
     React.useEffect(() => {
         // 只能單次取得資料
         // firebase.firestore().collection('posts').doc(postId).get().then((docSnapshot) => {
@@ -44,6 +46,36 @@ function Post() {
     // 是否已點讚
     const isLiked = post.likedBy?.includes(firebase.auth().currentUser.uid)
 
+    function onSubmit() {
+        setIsLoading(true)
+        // batch功用去判斷有沒有同步打api成功
+        const firestore = firebase.firestore();
+        const batch = firestore.batch();
+
+        const postRef = firestore.collection('posts').doc(postId)
+        batch.update(postRef, {
+            // 筆數
+            commentsCount: firebase.firestore.FieldValue.increment(1)
+        })
+
+        // 子集合
+        const commentRef = postRef.collection('comments').doc();
+        batch.set(commentRef, {
+            content: commentContent,
+            createdAt: firebase.firestore.Timestamp.now(),
+            author: {
+                uid: firebase.auth().currentUser.uid,
+                displayName: firebase.auth().currentUser.displayName || '',
+                photoURL: firebase.auth().currentUser.photoURL || '',
+            }
+        });
+
+        batch.commit().then(() => {
+            setCommentContent('')
+            setIsLoading(false)
+        })
+    }
+
     return <Container>
         <Grid>
             <Grid.Row>
@@ -64,6 +96,23 @@ function Post() {
                         <Icon name={`thumbs up ${isLiked ? '' : 'outline'}`} color={isLiked ? 'blue' : 'grey'} link onClick={() => toggle(isLiked, 'likedBy')} />．
                         <Icon name={`bookmark ${isCollected ? '' : 'outline'}`} color={isCollected ? 'orange' : 'grey'} link onClick={() => toggle(isCollected, 'collectedBy')} />
                     </Segment>
+                    <Comment.Group>
+                        <Form reply>
+                            <Form.TextArea value={commentContent} onChange={(e) => setCommentContent(e.target.value)}></Form.TextArea>
+                            <Form.Button onClick={onSubmit} loading={isLoading}>留言</Form.Button>
+                        </Form>
+                        <Header>共 2 篇留言</Header>
+                        <Comment>
+                            <Comment.Avatar src='' />
+                            <Comment.Content>
+                                <Comment.Author as='span'>留言者名稱</Comment.Author>
+                                <Comment.Metadata>
+                                    {new Date().toLocaleDateString()}
+                                </Comment.Metadata>
+                                <Comment.Text>我覺得這個還好</Comment.Text>
+                            </Comment.Content>
+                        </Comment>
+                    </Comment.Group>
                 </Grid.Column>
                 <Grid.Column width={3}>空白</Grid.Column>
             </Grid.Row>
