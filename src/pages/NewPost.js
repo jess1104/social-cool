@@ -53,7 +53,7 @@ function NewPost() {
                     },
                     imageUrl
                 }).then((res) => {
-                    console.log('res', res);
+                    // console.log('res', res);
                     setIsLoading(false)
                     navigate('/')
                 })

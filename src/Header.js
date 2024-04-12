@@ -4,15 +4,7 @@ import React from 'react'
 
 import firebase from './utils/firebase'
 
-function Header() {
-    const [user, setUser] = React.useState(null);
-    // 監聽user狀態
-    React.useEffect(() => {
-        firebase.auth().onAuthStateChanged((curUser) => {
-            // console.log('curUser', curUser);
-            setUser(curUser)
-        })
-    }, [])
+function Header({ user }) {
     return <Menu>
         <Menu.Item as={Link} to="/">Social Web</Menu.Item>
         <Menu.Item><Search /></Menu.Item>

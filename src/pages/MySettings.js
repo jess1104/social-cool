@@ -63,7 +63,7 @@ function MyPhoto({ user }) {
                 user.updateProfile({
                     photoURL: imageUrl,
                 }).then((res) => {
-                    console.log('userPhotos', res);
+                    // console.log('userPhotos', res);
                     setIsLoading(false)
                     setFile(null)
                     setIsModalOpen(false)
@@ -147,14 +147,7 @@ function MyPassword({ user }) {
     </>
 }
 
-function MySettings() {
-    const [user, setUser] = React.useState({})
-    React.useEffect(() => {
-        firebase.auth().onAuthStateChanged((user) => {
-            setUser(user)
-        })
-    }, [])
-
+function MySettings({ user }) {
     return <>
         <Header>會員資料</Header>
         <MyName user={user} />
