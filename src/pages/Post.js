@@ -75,9 +75,9 @@ function Post() {
             content: commentContent,
             createdAt: firebase.firestore.Timestamp.now(),
             author: {
-                uid: firebase.auth().currentUser.uid,
-                displayName: firebase.auth().currentUser.displayName || '',
-                photoURL: firebase.auth().currentUser.photoURL || '',
+                uid: firebase.auth().currentUser?.uid || '',
+                displayName: firebase.auth().currentUser?.displayName || '',
+                photoURL: firebase.auth().currentUser?.photoURL || '',
             }
         });
 
