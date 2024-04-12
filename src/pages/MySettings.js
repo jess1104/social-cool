@@ -1,13 +1,12 @@
 import React from 'react'
-import { Header, Button, Segment, Modal, Input } from 'semantic-ui-react'
+import { Header, Button, Segment, Modal, Input, Image } from 'semantic-ui-react'
 
 import firebase from '../utils/firebase'
 
-function MyName() {
+function MyName({ user }) {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [displayName, setDisplayName] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
-    const user = firebase.auth().currentUser || {};
 
     function onSubmit() {
         setIsLoading(true)
@@ -43,11 +42,72 @@ function MyName() {
     </>
 }
 
+function MyPhoto({ user }) {
+    const [isModalOpen, setIsModalOpen] = React.useState(false)
+    const [file, setFile] = React.useState(null)
+    const [isLoading, setIsLoading] = React.useState(false)
+
+    // 預覽圖片
+    const previewUrl = file ? URL.createObjectURL(file) : user.photoURL
+
+    function onSubmit(text) {
+        // console.log('我修改囉圖片', text);
+        setIsLoading(true)
+        // 上傳圖片至storage
+        const fileRef = firebase.storage().ref('user-photos/' + user.uid)
+        const metadata = { contentType: file.type }
+        fileRef.put(file, metadata).then(() => {
+            // 再拿到上傳上去的圖片
+            fileRef.getDownloadURL().then((imageUrl) => {
+                // 塞入資料updateProfile
+                user.updateProfile({
+                    photoURL: imageUrl,
+                }).then((res) => {
+                    console.log('userPhotos', res);
+                    setIsLoading(false)
+                    setFile(null)
+                    setIsModalOpen(false)
+                })
+            })
+        })
+    }
+    return <>
+        <Header size='small'>
+            會員照片
+            <Button floated='right' onClick={() => setIsModalOpen(true)}>修改</Button>
+        </Header>
+        <Segment vertical><Image src={user.photoURL} avatar /></Segment>
+        <Modal open={isModalOpen} size='mini'>
+            <Modal.Header>修改會員照片</Modal.Header>
+            <Modal.Content image>
+                <Image avatar wrapped src={previewUrl} />
+                <Modal.Description>
+                    <Button as='label' htmlFor='post-image'>
+                        上傳
+                    </Button>
+                    <Input type='file' id='post-image' style={{ display: 'none' }} onChange={(e) => setFile(e.target.files[0])} />
+                </Modal.Description>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button onClick={() => setIsModalOpen(false)}>取消</Button>
+                <Button onClick={onSubmit} loading={isLoading}>修改</Button>
+            </Modal.Actions>
+        </Modal>
+    </>
+}
+
 function MySettings() {
+    const [user, setUser] = React.useState({})
+    React.useEffect(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+            setUser(user)
+        })
+    }, [])
 
     return <>
         <Header>會員資料</Header>
-        <MyName />
+        <MyName user={user} />
+        <MyPhoto user={user} />
     </>
 }
 
