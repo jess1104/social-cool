@@ -88,7 +88,7 @@ function Post() {
     }
 
     return <>
-        {post.author.photoURL ? <Image src={post.author.photoURL} /> : <Icon name='user circle' />}
+        {post.author.photoURL ? <Image avatar src={post.author.photoURL} /> : <Icon name='user circle' />}
         {post.author.displayName || '使用者'}
         <Header>
             {post.title}

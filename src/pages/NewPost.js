@@ -46,7 +46,7 @@ function NewPost() {
                     // 會拿到當下時間
                     createdAt: firebase.firestore.Timestamp.now(),
                     author: {
-                        displayNmae: firebase.auth().currentUser.displayName || '',
+                        displayName: firebase.auth().currentUser.displayName || '',
                         photoURL: firebase.auth().currentUser.photoURL || '',
                         uid: firebase.auth().currentUser.uid,
                         email: firebase.auth().currentUser.email
