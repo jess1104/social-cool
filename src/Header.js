@@ -7,7 +7,6 @@ import firebase from './utils/firebase'
 function Header({ user }) {
     return <Menu>
         <Menu.Item as={Link} to="/">Social Web</Menu.Item>
-        <Menu.Item><Search /></Menu.Item>
         <Menu.Menu position='right'>
             {
                 user ? (
